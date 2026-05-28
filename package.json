@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "npm run build --prefix frontend",
-    "start": "start-server -s ./frontend/dist"
+    "start": "start-server -s ./frontend/dist",
+    "postinstall": "cd frontend && npm ci"
   },
   "license": "ISC",
   "dependencies": {
