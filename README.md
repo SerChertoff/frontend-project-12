@@ -33,7 +33,7 @@ make start
 
 ## Демо
 
-https://frontend-project-12.onrender.com
+https://frontend-project-12-fze3.onrender.com
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/SerChertoff/frontend-project-12)
 
