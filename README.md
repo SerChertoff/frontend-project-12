@@ -33,5 +33,8 @@ make start
 
 ## Демо
 
-<!-- Замените ссылку после деплоя на Render -->
-https://your-app.onrender.com
+https://frontend-project-12.onrender.com
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/SerChertoff/frontend-project-12)
+
+При первом деплое выберите тариф **Free** и вариант **for educational purposes**.
