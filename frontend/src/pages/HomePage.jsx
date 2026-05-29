@@ -2,12 +2,20 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import io from 'socket.io-client';
-import { fetchChannels } from '../slices/channelsSlice';
+import {
+  fetchChannels,
+  addChannel,
+  removeChannel,
+  renameChannel,
+} from '../slices/channelsSlice';
 import { fetchMessages, addMessage } from '../slices/messagesSlice';
 import { selectAuth } from '../slices/authSlice';
 import { setConnectionStatus } from '../slices/uiSlice';
 import Channels from '../components/Channels';
 import Messages from '../components/Messages';
+import AddChannelModal from '../components/modals/AddChannelModal';
+import RemoveChannelModal from '../components/modals/RemoveChannelModal';
+import RenameChannelModal from '../components/modals/RenameChannelModal';
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -40,9 +48,27 @@ const HomePage = () => {
       dispatch(addMessage(payload));
     };
 
+    const handleNewChannel = (payload) => {
+      dispatch(addChannel(payload));
+    };
+
+    const handleRemoveChannel = (payload) => {
+      dispatch(removeChannel(payload.id));
+    };
+
+    const handleRenameChannel = (payload) => {
+      dispatch(renameChannel({
+        id: payload.id,
+        changes: { name: payload.name },
+      }));
+    };
+
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('newMessage', handleNewMessage);
+    socket.on('newChannel', handleNewChannel);
+    socket.on('removeChannel', handleRemoveChannel);
+    socket.on('renameChannel', handleRenameChannel);
 
     if (socket.connected) {
       handleConnect();
@@ -52,6 +78,9 @@ const HomePage = () => {
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('newMessage', handleNewMessage);
+      socket.off('newChannel', handleNewChannel);
+      socket.off('removeChannel', handleRemoveChannel);
+      socket.off('renameChannel', handleRenameChannel);
       socket.disconnect();
     };
   }, [dispatch]);
@@ -80,6 +109,9 @@ const HomePage = () => {
           <Messages />
         </Col>
       </Row>
+      <AddChannelModal />
+      <RemoveChannelModal />
+      <RenameChannelModal />
     </Container>
   );
 };

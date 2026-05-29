@@ -4,6 +4,7 @@ import {
   createEntityAdapter,
   createAsyncThunk,
 } from '@reduxjs/toolkit';
+import { removeChannel } from './channelsSlice';
 import routes from '../routes';
 
 const messagesAdapter = createEntityAdapter();
@@ -43,6 +44,13 @@ const messagesSlice = createSlice({
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loadingStatus = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(removeChannel, (state, action) => {
+        const channelId = action.payload;
+        const remainingMessages = Object.values(state.entities).filter(
+          (message) => String(message.channelId) !== String(channelId),
+        );
+        messagesAdapter.setAll(state, remainingMessages);
       });
   },
 });

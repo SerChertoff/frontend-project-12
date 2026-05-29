@@ -35,8 +35,9 @@ const Messages = () => {
         </Alert>
       )}
       <div className="messages-panel__header">
-        <h2 className="messages-panel__title">
+        <h2 className="messages-panel__title text-truncate">
           #
+          {' '}
           {currentChannel?.name ?? '...'}
         </h2>
         <span className="messages-panel__count">
@@ -47,7 +48,7 @@ const Messages = () => {
       </div>
       <div className="messages-panel__list">
         {channelMessages.map(({ id, username, body }) => (
-          <div key={id} className="messages-panel__message">
+          <div key={id} className="messages-panel__message text-break">
             <strong>
               {username}
               :

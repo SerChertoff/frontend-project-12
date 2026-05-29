@@ -124,18 +124,31 @@ body {
 .channels-panel {
   padding: 16px;
   height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.channels-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .channels-panel__title {
   font-size: 18px;
-  margin: 0 0 12px;
+  margin: 0;
 }
 
 .channels-panel__list {
   gap: 4px;
+  overflow-y: auto;
 }
 
-.channels-panel__item {
+.channel-item__name {
+  flex: 1;
+  min-width: 0;
   border: none;
 }
 
@@ -150,14 +163,17 @@ body {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
+  min-width: 0;
 }
 
 .messages-panel__title {
   margin: 0;
   font-size: 20px;
+  min-width: 0;
 }
 
 .messages-panel__count {

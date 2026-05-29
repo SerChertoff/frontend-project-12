@@ -1,28 +1,31 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Nav, Button } from 'react-bootstrap';
+import { PlusSquare } from 'react-bootstrap-icons';
 import { channelsSelectors } from '../slices/channelsSlice';
-import { selectCurrentChannelId, setCurrentChannelId } from '../slices/uiSlice';
+import { openAddChannelModal } from '../slices/uiSlice';
+import Channel from './Channel';
 
 const Channels = () => {
   const dispatch = useDispatch();
   const channels = useSelector(channelsSelectors.selectAll);
-  const currentChannelId = useSelector(selectCurrentChannelId);
 
   return (
     <div className="channels-panel">
-      <h2 className="channels-panel__title">Каналы</h2>
+      <div className="channels-panel__header">
+        <h2 className="channels-panel__title">Каналы</h2>
+        <Button
+          variant="outline-primary"
+          size="sm"
+          className="channels-panel__add"
+          onClick={() => dispatch(openAddChannelModal())}
+          aria-label="Добавить канал"
+        >
+          <PlusSquare />
+        </Button>
+      </div>
       <Nav className="flex-column channels-panel__list">
-        {channels.map(({ id, name }) => (
-          <Nav.Item key={id}>
-            <Button
-              variant={id === currentChannelId ? 'primary' : 'light'}
-              className="channels-panel__item w-100 text-start"
-              onClick={() => dispatch(setCurrentChannelId(id))}
-            >
-              #
-              {name}
-            </Button>
-          </Nav.Item>
+        {channels.map((channel) => (
+          <Channel key={channel.id} channel={channel} />
         ))}
       </Nav>
     </div>
