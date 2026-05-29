@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import io from 'socket.io-client';
 import { fetchChannels } from '../slices/channelsSlice';
-import { fetchMessages } from '../slices/messagesSlice';
+import { fetchMessages, addMessage } from '../slices/messagesSlice';
 import { selectAuth } from '../slices/authSlice';
+import { setConnectionStatus } from '../slices/uiSlice';
 import Channels from '../components/Channels';
 import Messages from '../components/Messages';
 
@@ -21,6 +23,37 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(fetchChannels());
     dispatch(fetchMessages());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const socket = io();
+
+    const handleConnect = () => {
+      dispatch(setConnectionStatus('connected'));
+    };
+
+    const handleDisconnect = () => {
+      dispatch(setConnectionStatus('disconnected'));
+    };
+
+    const handleNewMessage = (payload) => {
+      dispatch(addMessage(payload));
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('newMessage', handleNewMessage);
+
+    if (socket.connected) {
+      handleConnect();
+    }
+
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('newMessage', handleNewMessage);
+      socket.disconnect();
+    };
   }, [dispatch]);
 
   if (isLoading) {

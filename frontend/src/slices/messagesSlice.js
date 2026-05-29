@@ -27,7 +27,9 @@ const messagesSlice = createSlice({
     loadingStatus: 'idle',
     error: null,
   }),
-  reducers: {},
+  reducers: {
+    addMessage: messagesAdapter.addOne,
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchMessages.pending, (state) => {
@@ -48,5 +50,7 @@ const messagesSlice = createSlice({
 export const messagesSelectors = messagesAdapter.getSelectors(
   (state) => state.messages,
 );
+
+export const { addMessage } = messagesSlice.actions;
 
 export default messagesSlice.reducer;
