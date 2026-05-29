@@ -1,42 +1,98 @@
-import { Formik, Form, Field } from 'formik';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useFormik } from 'formik';
+import { Card, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { setCredentials } from '../slices/authSlice';
+import routes from '../routes';
 
-const LoginPage = () => (
-  <main className="page">
-    <h1>Войти</h1>
-    <Formik
-      initialValues={{
-        username: '',
-        password: '',
-      }}
-      onSubmit={() => {}}
-    >
-      <Form className="auth-form">
-        <label className="auth-form__field" htmlFor="username">
-          Имя пользователя
-          <Field
-            id="username"
-            name="username"
-            type="text"
-            autoComplete="username"
-            required
-          />
-        </label>
-        <label className="auth-form__field" htmlFor="password">
-          Пароль
-          <Field
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-          />
-        </label>
-        <button type="submit" className="auth-form__submit">
-          Войти
-        </button>
-      </Form>
-    </Formik>
-  </main>
-);
+const LoginPage = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const inputRef = useRef(null);
+  const [authFailed, setAuthFailed] = useState(false);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: '',
+    },
+    onSubmit: async (values, { setSubmitting }) => {
+      setAuthFailed(false);
+
+      try {
+        const response = await axios.post(routes.login(), values);
+        dispatch(setCredentials(response.data));
+        navigate(routes.rootPage());
+      } catch (error) {
+        if (error.response?.status === 401) {
+          setAuthFailed(true);
+          inputRef.current?.focus();
+        }
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
+
+  return (
+    <main className="page">
+      <Card className="auth-card">
+        <Card.Body className="p-4">
+          <Card.Title as="h1" className="text-center mb-4">
+            Войти
+          </Card.Title>
+          <Form onSubmit={formik.handleSubmit}>
+            <Form.Group className="mb-3" controlId="username">
+              <Form.Label>Имя пользователя</Form.Label>
+              <Form.Control
+                ref={inputRef}
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.username}
+                isInvalid={authFailed}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="password">
+              <Form.Label>Пароль</Form.Label>
+              <Form.Control
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.password}
+                isInvalid={authFailed}
+              />
+              {authFailed && (
+                <Form.Control.Feedback type="invalid">
+                  Неверные имя пользователя или пароль
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
+            <Button
+              type="submit"
+              variant="outline-primary"
+              className="w-100"
+              disabled={formik.isSubmitting}
+            >
+              Войти
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </main>
+  );
+};
 
 export default LoginPage;

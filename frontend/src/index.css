@@ -63,42 +63,8 @@ body {
   padding: 32px 16px;
 }
 
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: min(100%, 320px);
-  text-align: left;
-}
-
-.auth-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.auth-form__field input {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  font: inherit;
-  color: var(--text-h);
-  background: var(--bg);
-}
-
-.auth-form__submit {
-  padding: 10px 16px;
-  border: 1px solid var(--accent-border);
-  border-radius: 4px;
-  background: var(--accent-bg);
-  color: var(--text-h);
-  font: inherit;
-  cursor: pointer;
-}
-
-.auth-form__submit:hover {
-  background: var(--accent);
-  color: #fff;
+.auth-card {
+  width: min(100%, 420px);
 }
 
 #root {
