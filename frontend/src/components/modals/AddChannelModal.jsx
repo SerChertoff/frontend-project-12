@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
   Modal, Form, Button,
 } from 'react-bootstrap';
@@ -14,6 +15,7 @@ import {
   setCurrentChannelId,
 } from '../../slices/uiSlice';
 import { setLocale, getChannelSchema } from '../../validation/validation';
+import showApiError from '../../utils/errorHandler';
 import routes from '../../routes';
 
 const AddChannelModal = () => {
@@ -55,8 +57,9 @@ const AddChannelModal = () => {
         dispatch(addChannel(response.data));
         dispatch(setCurrentChannelId(response.data.id));
         handleClose(resetForm);
-      } catch {
-        // ошибка сети — модальное окно остаётся открытым
+        toast.success(t('channels.created'));
+      } catch (error) {
+        showApiError(error, t);
       }
     },
   });

@@ -6,6 +6,7 @@ import { Form, Button, InputGroup } from 'react-bootstrap';
 import { addMessage } from '../slices/messagesSlice';
 import { selectAuth } from '../slices/authSlice';
 import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlice';
+import showApiError from '../utils/errorHandler';
 import routes from '../routes';
 
 const MessageForm = () => {
@@ -39,8 +40,8 @@ const MessageForm = () => {
 
         dispatch(addMessage(response.data));
         resetForm();
-      } catch {
-        // Ошибка сети — сообщение остаётся в поле ввода
+      } catch (error) {
+        showApiError(error, t);
       } finally {
         setSubmitting(false);
       }

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
   Modal, Form, Button,
 } from 'react-bootstrap';
@@ -18,6 +19,7 @@ import {
   closeRenameChannelModal,
 } from '../../slices/uiSlice';
 import { setLocale, getChannelSchema } from '../../validation/validation';
+import showApiError from '../../utils/errorHandler';
 import routes from '../../routes';
 
 const RenameChannelModal = () => {
@@ -61,8 +63,9 @@ const RenameChannelModal = () => {
           changes: { name: response.data.name },
         }));
         handleClose(resetForm);
-      } catch {
-        // ошибка сети
+        toast.success(t('channels.renamed'));
+      } catch (error) {
+        showApiError(error, t);
       }
     },
   });

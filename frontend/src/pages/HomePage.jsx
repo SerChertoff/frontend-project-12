@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import io from 'socket.io-client';
 import {
@@ -11,6 +12,7 @@ import {
 } from '../slices/channelsSlice';
 import { fetchMessages, addMessage } from '../slices/messagesSlice';
 import { setConnectionStatus } from '../slices/uiSlice';
+import showApiError from '../utils/errorHandler';
 import Channels from '../components/Channels';
 import Messages from '../components/Messages';
 import AddChannelModal from '../components/modals/AddChannelModal';
@@ -29,9 +31,17 @@ const HomePage = () => {
   const isLoading = channelsLoading || messagesLoading;
 
   useEffect(() => {
-    dispatch(fetchChannels());
-    dispatch(fetchMessages());
-  }, [dispatch]);
+    const loadData = async () => {
+      try {
+        await dispatch(fetchChannels()).unwrap();
+        await dispatch(fetchMessages()).unwrap();
+      } catch (error) {
+        showApiError(error, t);
+      }
+    };
+
+    loadData();
+  }, [dispatch, t]);
 
   useEffect(() => {
     const socket = io();
@@ -42,6 +52,7 @@ const HomePage = () => {
 
     const handleDisconnect = () => {
       dispatch(setConnectionStatus('disconnected'));
+      toast.error(t('errors.network'));
     };
 
     const handleNewMessage = (payload) => {
@@ -83,7 +94,7 @@ const HomePage = () => {
       socket.off('renameChannel', handleRenameChannel);
       socket.disconnect();
     };
-  }, [dispatch]);
+  }, [dispatch, t]);
 
   if (isLoading) {
     return (

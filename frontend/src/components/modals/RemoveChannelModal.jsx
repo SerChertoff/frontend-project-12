@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import {
   removeChannel,
   selectChannelToRemove,
@@ -15,6 +16,7 @@ import {
   closeRemoveChannelModal,
   setCurrentChannelId,
 } from '../../slices/uiSlice';
+import showApiError from '../../utils/errorHandler';
 import routes from '../../routes';
 
 const RemoveChannelModal = () => {
@@ -39,8 +41,9 @@ const RemoveChannelModal = () => {
       dispatch(removeChannel(response.data.id));
       dispatch(setCurrentChannelId(DEFAULT_CHANNEL_ID));
       handleClose();
-    } catch {
-      // ошибка сети
+      toast.success(t('channels.removed'));
+    } catch (error) {
+      showApiError(error, t);
     } finally {
       setIsSubmitting(false);
     }
