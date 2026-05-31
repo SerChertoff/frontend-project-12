@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import { Card, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setCredentials } from '../slices/authSlice';
 import routes from '../routes';
@@ -83,11 +83,14 @@ const LoginPage = () => {
             <Button
               type="submit"
               variant="outline-primary"
-              className="w-100"
+              className="w-100 mb-3"
               disabled={formik.isSubmitting}
             >
               Войти
             </Button>
+            <div className="text-center">
+              <Link to={routes.signupPage()}>Нет аккаунта? Зарегистрироваться</Link>
+            </div>
           </Form>
         </Card.Body>
       </Card>

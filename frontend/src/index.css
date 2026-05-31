@@ -84,25 +84,8 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
+  min-height: calc(100svh - 56px);
   padding: 0;
-}
-
-.chat-page__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.chat-page__title {
-  margin: 0;
-  font-size: 24px;
-}
-
-.chat-page__user {
-  color: var(--text);
 }
 
 .chat-page__body {
@@ -114,7 +97,7 @@ body {
 .chat-page__sidebar,
 .chat-page__content {
   padding: 0;
-  min-height: calc(100svh - 73px);
+  min-height: calc(100svh - 56px);
 }
 
 .chat-page__sidebar {
