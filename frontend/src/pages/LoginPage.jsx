@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Card, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +9,7 @@ import { setCredentials } from '../slices/authSlice';
 import routes from '../routes';
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -45,11 +47,11 @@ const LoginPage = () => {
       <Card className="auth-card">
         <Card.Body className="p-4">
           <Card.Title as="h1" className="text-center mb-4">
-            Войти
+            {t('login.header')}
           </Card.Title>
           <Form onSubmit={formik.handleSubmit}>
             <Form.Group className="mb-3" controlId="username">
-              <Form.Label>Имя пользователя</Form.Label>
+              <Form.Label>{t('login.username')}</Form.Label>
               <Form.Control
                 ref={inputRef}
                 name="username"
@@ -63,7 +65,7 @@ const LoginPage = () => {
               />
             </Form.Group>
             <Form.Group className="mb-3" controlId="password">
-              <Form.Label>Пароль</Form.Label>
+              <Form.Label>{t('login.password')}</Form.Label>
               <Form.Control
                 name="password"
                 type="password"
@@ -76,7 +78,7 @@ const LoginPage = () => {
               />
               {authFailed && (
                 <Form.Control.Feedback type="invalid">
-                  Неверные имя пользователя или пароль
+                  {t('login.authFailed')}
                 </Form.Control.Feedback>
               )}
             </Form.Group>
@@ -86,10 +88,11 @@ const LoginPage = () => {
               className="w-100 mb-3"
               disabled={formik.isSubmitting}
             >
-              Войти
+              {t('login.submit')}
             </Button>
             <div className="text-center">
-              <Link to={routes.signupPage()}>Нет аккаунта? Зарегистрироваться</Link>
+              {t('login.newToChat')}
+              <Link to={routes.signupPage()}>{t('login.signup')}</Link>
             </div>
           </Form>
         </Card.Body>

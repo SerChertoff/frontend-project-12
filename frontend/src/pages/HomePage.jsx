@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import io from 'socket.io-client';
 import {
@@ -17,6 +18,7 @@ import RemoveChannelModal from '../components/modals/RemoveChannelModal';
 import RenameChannelModal from '../components/modals/RenameChannelModal';
 
 const HomePage = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const channelsLoading = useSelector(
     (state) => state.channels.loadingStatus === 'loading',
@@ -87,7 +89,7 @@ const HomePage = () => {
     return (
       <main className="page">
         <Spinner animation="border" role="status">
-          <span className="visually-hidden">Загрузка...</span>
+          <span className="visually-hidden">{t('loading')}</span>
         </Spinner>
       </main>
     );

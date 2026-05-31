@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Nav, Button } from 'react-bootstrap';
 import { PlusSquare } from 'react-bootstrap-icons';
@@ -6,19 +7,20 @@ import { openAddChannelModal } from '../slices/uiSlice';
 import Channel from './Channel';
 
 const Channels = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const channels = useSelector(channelsSelectors.selectAll);
 
   return (
     <div className="channels-panel">
       <div className="channels-panel__header">
-        <h2 className="channels-panel__title">Каналы</h2>
+        <h2 className="channels-panel__title">{t('channels.title')}</h2>
         <Button
           variant="outline-primary"
           size="sm"
           className="channels-panel__add"
           onClick={() => dispatch(openAddChannelModal())}
-          aria-label="Добавить канал"
+          aria-label={t('channels.add')}
         >
           <PlusSquare />
         </Button>

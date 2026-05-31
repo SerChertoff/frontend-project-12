@@ -1,18 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Card, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { setCredentials } from '../slices/authSlice';
-import signupSchema from '../validation/signup';
+import { setLocale, getSignupSchema } from '../validation/validation';
 import routes from '../routes';
 
 const SignupPage = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [signupFailed, setSignupFailed] = useState(false);
+
+  setLocale(t);
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -24,7 +28,7 @@ const SignupPage = () => {
       password: '',
       confirmPassword: '',
     },
-    validationSchema: signupSchema,
+    validationSchema: getSignupSchema(),
     onSubmit: async (values, { setSubmitting }) => {
       setSignupFailed(false);
 
@@ -51,16 +55,16 @@ const SignupPage = () => {
       <Card className="auth-card">
         <Card.Body className="p-4">
           <Card.Title as="h1" className="text-center mb-4">
-            Регистрация
+            {t('signup.header')}
           </Card.Title>
           <Form onSubmit={formik.handleSubmit} noValidate>
             {signupFailed && (
               <div className="text-danger small mb-3">
-                Такой пользователь уже существует
+                {t('signup.alreadyExists')}
               </div>
             )}
             <Form.Group className="mb-3" controlId="signupUsername">
-              <Form.Label>Имя пользователя</Form.Label>
+              <Form.Label>{t('signup.username')}</Form.Label>
               <Form.Control
                 ref={inputRef}
                 name="username"
@@ -79,7 +83,7 @@ const SignupPage = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="signupPassword">
-              <Form.Label>Пароль</Form.Label>
+              <Form.Label>{t('signup.password')}</Form.Label>
               <Form.Control
                 name="password"
                 type="password"
@@ -94,7 +98,7 @@ const SignupPage = () => {
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="signupConfirmPassword">
-              <Form.Label>Подтверждение пароля</Form.Label>
+              <Form.Label>{t('signup.confirm')}</Form.Label>
               <Form.Control
                 name="confirmPassword"
                 type="password"
@@ -117,10 +121,11 @@ const SignupPage = () => {
               className="w-100 mb-3"
               disabled={formik.isSubmitting}
             >
-              Зарегистрироваться
+              {t('signup.submit')}
             </Button>
             <div className="text-center">
-              <Link to={routes.loginPage()}>Уже есть аккаунт? Войти</Link>
+              {t('signup.hasAccount')}
+              <Link to={routes.loginPage()}>{t('signup.login')}</Link>
             </div>
           </Form>
         </Card.Body>

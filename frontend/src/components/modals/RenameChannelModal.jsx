@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import {
   Modal, Form, Button,
@@ -16,10 +17,11 @@ import {
   selectModalRenameChannel,
   closeRenameChannelModal,
 } from '../../slices/uiSlice';
-import { getChannelSchema } from '../../validation/channels';
+import { setLocale, getChannelSchema } from '../../validation/validation';
 import routes from '../../routes';
 
 const RenameChannelModal = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const show = useSelector(selectModalRenameChannel);
@@ -30,6 +32,8 @@ const RenameChannelModal = () => {
     channelId ? channelsSelectors.selectById(state, channelId) : null
   ));
   const channelNames = channels.map(({ name }) => name);
+
+  setLocale(t);
 
   const handleClose = (resetForm) => {
     dispatch(closeRenameChannelModal());
@@ -76,12 +80,12 @@ const RenameChannelModal = () => {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('modals.rename')}</Modal.Title>
       </Modal.Header>
       <Form onSubmit={formik.handleSubmit}>
         <Modal.Body>
           <Form.Group controlId="renameChannelName">
-            <Form.Label>Имя канала</Form.Label>
+            <Form.Label>{t('modals.channelName')}</Form.Label>
             <Form.Control
               ref={inputRef}
               name="name"
@@ -101,10 +105,10 @@ const RenameChannelModal = () => {
             onClick={() => handleClose(formik.resetForm)}
             disabled={formik.isSubmitting}
           >
-            Отменить
+            {t('modals.cancel')}
           </Button>
           <Button type="submit" variant="primary" disabled={formik.isSubmitting}>
-            Отправить
+            {t('modals.submit')}
           </Button>
         </Modal.Footer>
       </Form>

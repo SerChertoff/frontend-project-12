@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Modal, Button } from 'react-bootstrap';
 import axios from 'axios';
 import {
@@ -17,6 +18,7 @@ import {
 import routes from '../../routes';
 
 const RemoveChannelModal = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const show = useSelector(selectModalRemoveChannel);
@@ -47,15 +49,15 @@ const RemoveChannelModal = () => {
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('modals.remove')}</Modal.Title>
       </Modal.Header>
-      <Modal.Body>Вы уверены?</Modal.Body>
+      <Modal.Body>{t('modals.confirmation')}</Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose} disabled={isSubmitting}>
-          Отменить
+          {t('modals.cancel')}
         </Button>
         <Button variant="danger" onClick={handleConfirm} disabled={isSubmitting}>
-          Удалить
+          {t('modals.confirm')}
         </Button>
       </Modal.Footer>
     </Modal>

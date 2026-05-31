@@ -1,6 +1,7 @@
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Form, Button, InputGroup } from 'react-bootstrap';
 import { addMessage } from '../slices/messagesSlice';
 import { selectAuth } from '../slices/authSlice';
@@ -8,6 +9,7 @@ import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlic
 import routes from '../routes';
 
 const MessageForm = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const { username, token } = useSelector(selectAuth);
   const currentChannelId = useSelector(selectCurrentChannelId);
@@ -54,17 +56,17 @@ const MessageForm = () => {
           name="body"
           placeholder={
             connectionStatus === 'connected'
-              ? 'Введите сообщение...'
-              : 'Ожидание соединения...'
+              ? t('chat.inputMessage')
+              : t('chat.waitingConnection')
           }
-          aria-label="Новое сообщение"
+          aria-label={t('chat.newMessage')}
           value={formik.values.body}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           disabled={isDisabled}
         />
         <Button type="submit" variant="primary" disabled={isDisabled}>
-          {formik.isSubmitting ? '...' : 'Отправить'}
+          {formik.isSubmitting ? '...' : t('chat.send')}
         </Button>
       </InputGroup>
     </Form>

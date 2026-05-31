@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { Alert } from 'react-bootstrap';
 import { messagesSelectors } from '../slices/messagesSlice';
 import { channelsSelectors } from '../slices/channelsSlice';
@@ -7,6 +8,7 @@ import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlic
 import MessageForm from './MessageForm';
 
 const Messages = () => {
+  const { t } = useTranslation();
   const messagesEndRef = useRef(null);
   const currentChannelId = useSelector(selectCurrentChannelId);
   const connectionStatus = useSelector(selectConnectionStatus);
@@ -26,12 +28,12 @@ const Messages = () => {
     <div className="messages-panel">
       {connectionStatus === 'connecting' && (
         <Alert variant="info" className="mb-3 py-2">
-          Подключение к чату...
+          {t('chat.connecting')}
         </Alert>
       )}
       {connectionStatus === 'disconnected' && (
         <Alert variant="warning" className="mb-3 py-2">
-          Нет соединения. Сообщения временно недоступны.
+          {t('chat.disconnected')}
         </Alert>
       )}
       <div className="messages-panel__header">
@@ -41,9 +43,7 @@ const Messages = () => {
           {currentChannel?.name ?? '...'}
         </h2>
         <span className="messages-panel__count">
-          {channelMessages.length}
-          {' '}
-          сообщений
+          {t('chat.messageCount', { count: channelMessages.length })}
         </span>
       </div>
       <div className="messages-panel__list">
