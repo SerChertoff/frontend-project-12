@@ -1,0 +1,9 @@
+const rollbarConfig = {
+  accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
+  environment: import.meta.env.MODE,
+  enabled: Boolean(import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN),
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+};
+
+export default rollbarConfig;
