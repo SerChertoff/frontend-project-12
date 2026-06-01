@@ -5,7 +5,7 @@ const ru = {
     loading: 'Загрузка...',
     login: {
       header: 'Войти',
-      username: 'Имя пользователя',
+      username: 'Ваш ник',
       password: 'Пароль',
       submit: 'Войти',
       authFailed: 'Неверные имя пользователя или пароль',
@@ -16,7 +16,7 @@ const ru = {
       header: 'Регистрация',
       username: 'Имя пользователя',
       password: 'Пароль',
-      confirm: 'Подтверждение пароля',
+      confirm: 'Подтвердите пароль',
       submit: 'Зарегистрироваться',
       alreadyExists: 'Такой пользователь уже существует',
       hasAccount: 'Уже есть аккаунт? ',
@@ -28,7 +28,7 @@ const ru = {
     },
     channels: {
       title: 'Каналы',
-      add: 'Добавить канал',
+      add: '+',
       menu: 'Управление каналом',
       rename: 'Переименовать',
       remove: 'Удалить',
