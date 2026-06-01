@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Nav, Button } from 'react-bootstrap';
-import { PlusSquare } from 'react-bootstrap-icons';
 import { channelsSelectors } from '../slices/channelsSlice';
 import { openAddChannelModal } from '../slices/uiSlice';
 import Channel from './Channel';
@@ -22,7 +21,7 @@ const Channels = () => {
           onClick={() => dispatch(openAddChannelModal())}
           aria-label={t('channels.add')}
         >
-          <PlusSquare />
+          {t('channels.add')}
         </Button>
       </div>
       <Nav className="flex-column channels-panel__list">
