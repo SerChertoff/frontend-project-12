@@ -52,7 +52,9 @@ const Channel = ({ channel: { id, name, removable } }) => {
               variant={id === currentChannelId ? 'primary' : 'light'}
               id={`channel-dropdown-${id}`}
               aria-label={t('channels.menu')}
-            />
+            >
+              <span className="visually-hidden">{t('channels.menu')}</span>
+            </Dropdown.Toggle>
             <Dropdown.Menu>
               <Dropdown.Item onClick={handleRename}>
                 {t('channels.rename')}
