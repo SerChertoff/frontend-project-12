@@ -5,6 +5,7 @@ import { Alert } from 'react-bootstrap';
 import { messagesSelectors } from '../slices/messagesSlice';
 import { channelsSelectors } from '../slices/channelsSlice';
 import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlice';
+import filterProfanity from '../filter';
 import MessageForm from './MessageForm';
 
 const Messages = () => {
@@ -54,7 +55,7 @@ const Messages = () => {
               :
             </strong>
             {' '}
-            {body}
+            {filterProfanity(body)}
           </div>
         ))}
         <div ref={messagesEndRef} />

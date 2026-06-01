@@ -16,6 +16,7 @@ import {
 } from '../../slices/uiSlice';
 import { setLocale, getChannelSchema } from '../../validation/validation';
 import showApiError from '../../utils/errorHandler';
+import filterProfanity from '../../filter';
 import routes from '../../routes';
 
 const AddChannelModal = () => {
@@ -49,7 +50,7 @@ const AddChannelModal = () => {
       try {
         const response = await axios.post(
           routes.channels(),
-          { name: values.name.trim() },
+          { name: filterProfanity(values.name.trim()) },
           {
             headers: { Authorization: `Bearer ${token}` },
           },

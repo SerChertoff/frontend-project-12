@@ -7,6 +7,7 @@ import { addMessage } from '../slices/messagesSlice';
 import { selectAuth } from '../slices/authSlice';
 import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlice';
 import showApiError from '../utils/errorHandler';
+import filterProfanity from '../filter';
 import routes from '../routes';
 
 const MessageForm = () => {
@@ -23,7 +24,7 @@ const MessageForm = () => {
     onSubmit: async (values, { resetForm, setSubmitting }) => {
       try {
         const newMessage = {
-          body: values.body.trim(),
+          body: filterProfanity(values.body.trim()),
           channelId: currentChannelId,
           username,
         };
