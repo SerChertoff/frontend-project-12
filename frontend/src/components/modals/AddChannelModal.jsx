@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +19,29 @@ import showApiError from '../../utils/errorHandler';
 import filterProfanity from '../../filter';
 import routes from '../../routes';
 
+const closeAddModal = (dispatch, resetForm) => {
+  dispatch(closeAddChannelModal());
+  resetForm();
+};
+
+const createAddChannelSubmit = ({ dispatch, t, token }) => async (values, { resetForm }) => {
+  try {
+    const response = await axios.post(
+      routes.channels(),
+      { name: filterProfanity(values.name.trim()) },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+    dispatch(addChannel(response.data));
+    dispatch(setCurrentChannelId(response.data.id));
+    closeAddModal(dispatch, resetForm);
+    toast.success(t('channels.created'));
+  } catch (error) {
+    showApiError(error, t);
+  }
+};
+
 const AddChannelModal = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -36,28 +59,10 @@ const AddChannelModal = () => {
     }
   }, [show]);
 
-  const handleClose = useCallback((resetForm) => {
-    dispatch(closeAddChannelModal());
-    resetForm();
-  }, [dispatch]);
-
-  const handleSubmit = useCallback(async (values, { resetForm }) => {
-    try {
-      const response = await axios.post(
-        routes.channels(),
-        { name: filterProfanity(values.name.trim()) },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      dispatch(addChannel(response.data));
-      dispatch(setCurrentChannelId(response.data.id));
-      handleClose(resetForm);
-      toast.success(t('channels.created'));
-    } catch (error) {
-      showApiError(error, t);
-    }
-  }, [dispatch, t, token, handleClose]);
+  const handleSubmit = useMemo(
+    () => createAddChannelSubmit({ dispatch, t, token }),
+    [dispatch, t, token],
+  );
 
   const formik = useFormik({
     initialValues: { name: '' },
@@ -70,7 +75,7 @@ const AddChannelModal = () => {
   return (
     <Modal
       show={show}
-      onHide={() => handleClose(formik.resetForm)}
+      onHide={() => closeAddModal(dispatch, formik.resetForm)}
       centered
     >
       <Modal.Header closeButton>
@@ -96,7 +101,7 @@ const AddChannelModal = () => {
         <Modal.Footer>
           <Button
             variant="secondary"
-            onClick={() => handleClose(formik.resetForm)}
+            onClick={() => closeAddModal(dispatch, formik.resetForm)}
             disabled={formik.isSubmitting}
           >
             {t('modals.cancel')}

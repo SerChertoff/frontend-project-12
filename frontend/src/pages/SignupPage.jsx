@@ -1,5 +1,5 @@
 import {
-  useCallback, useEffect, useRef, useState,
+  useEffect, useMemo, useRef, useState,
 } from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
@@ -10,6 +10,27 @@ import axios from 'axios';
 import { setCredentials } from '../slices/authSlice';
 import { setLocale, getSignupSchema } from '../validation/validation';
 import routes from '../routes';
+
+const createSignupSubmit = ({
+  dispatch, navigate, setSignupFailed,
+}) => async (values, { setSubmitting }) => {
+  setSignupFailed(false);
+
+  try {
+    const response = await axios.post(routes.signup(), {
+      username: values.username,
+      password: values.password,
+    });
+    dispatch(setCredentials(response.data));
+    navigate(routes.rootPage());
+  } catch (error) {
+    if (error.response?.status === 409) {
+      setSignupFailed(true);
+    }
+  } finally {
+    setSubmitting(false);
+  }
+};
 
 const SignupPage = () => {
   const { t } = useTranslation();
@@ -24,25 +45,16 @@ const SignupPage = () => {
     inputRef.current?.focus();
   }, []);
 
-  const handleSubmit = useCallback(async (values, { setSubmitting }) => {
-    setSignupFailed(false);
-
-    try {
-      const response = await axios.post(routes.signup(), {
-        username: values.username,
-        password: values.password,
-      });
-      dispatch(setCredentials(response.data));
-      navigate(routes.rootPage());
-    } catch (error) {
-      if (error.response?.status === 409) {
-        setSignupFailed(true);
-        inputRef.current?.focus();
-      }
-    } finally {
-      setSubmitting(false);
+  useEffect(() => {
+    if (signupFailed) {
+      inputRef.current?.focus();
     }
-  }, [dispatch, navigate]);
+  }, [signupFailed]);
+
+  const handleSubmit = useMemo(
+    () => createSignupSubmit({ dispatch, navigate, setSignupFailed }),
+    [dispatch, navigate],
+  );
 
   const formik = useFormik({
     initialValues: {

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { useFormik } from 'formik';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,6 +11,35 @@ import showApiError from '../utils/errorHandler';
 import filterProfanity from '../filter';
 import routes from '../routes';
 
+const createMessageSubmit = ({
+  dispatch, t, username, token, currentChannelId,
+}) => async (values, { resetForm, setSubmitting }) => {
+  try {
+    const newMessage = {
+      body: filterProfanity(values.body.trim()),
+      channelId: currentChannelId,
+      username,
+    };
+
+    if (!newMessage.body) {
+      return;
+    }
+
+    const response = await axios.post(routes.messages(), newMessage, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    dispatch(addMessage(response.data));
+    resetForm();
+  } catch (error) {
+    showApiError(error, t);
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 const MessageForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -18,32 +47,12 @@ const MessageForm = () => {
   const currentChannelId = useSelector(selectCurrentChannelId);
   const connectionStatus = useSelector(selectConnectionStatus);
 
-  const handleSubmit = useCallback(async (values, { resetForm, setSubmitting }) => {
-    try {
-      const newMessage = {
-        body: filterProfanity(values.body.trim()),
-        channelId: currentChannelId,
-        username,
-      };
-
-      if (!newMessage.body) {
-        return;
-      }
-
-      const response = await axios.post(routes.messages(), newMessage, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      dispatch(addMessage(response.data));
-      resetForm();
-    } catch (error) {
-      showApiError(error, t);
-    } finally {
-      setSubmitting(false);
-    }
-  }, [dispatch, t, username, token, currentChannelId]);
+  const handleSubmit = useMemo(
+    () => createMessageSubmit({
+      dispatch, t, username, token, currentChannelId,
+    }),
+    [dispatch, t, username, token, currentChannelId],
+  );
 
   const formik = useFormik({
     initialValues: {
