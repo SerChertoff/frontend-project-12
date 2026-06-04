@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -19,27 +21,29 @@ const LoginPage = () => {
     inputRef.current?.focus();
   }, []);
 
+  const handleSubmit = useCallback(async (values, { setSubmitting }) => {
+    setAuthFailed(false);
+
+    try {
+      const response = await axios.post(routes.login(), values);
+      dispatch(setCredentials(response.data));
+      navigate(routes.rootPage());
+    } catch (error) {
+      if (error.response?.status === 401) {
+        setAuthFailed(true);
+        inputRef.current?.focus();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }, [dispatch, navigate]);
+
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-    onSubmit: async (values, { setSubmitting }) => {
-      setAuthFailed(false);
-
-      try {
-        const response = await axios.post(routes.login(), values);
-        dispatch(setCredentials(response.data));
-        navigate(routes.rootPage());
-      } catch (error) {
-        if (error.response?.status === 401) {
-          setAuthFailed(true);
-          inputRef.current?.focus();
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
+    onSubmit: handleSubmit,
   });
 
   return (

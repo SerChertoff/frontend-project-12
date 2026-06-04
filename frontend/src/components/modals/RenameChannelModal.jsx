@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -38,11 +38,31 @@ const RenameChannelModal = () => {
 
   setLocale(t);
 
-  const handleClose = (resetForm) => {
+  const handleClose = useCallback((resetForm) => {
     dispatch(closeRenameChannelModal());
     dispatch(setChannelToRename(null));
     resetForm();
-  };
+  }, [dispatch]);
+
+  const handleSubmit = useCallback(async (values, { resetForm }) => {
+    try {
+      const response = await axios.patch(
+        routes.channel(channelId),
+        { name: filterProfanity(values.name.trim()) },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      dispatch(renameChannel({
+        id: response.data.id,
+        changes: { name: response.data.name },
+      }));
+      handleClose(resetForm);
+      toast.success(t('channels.renamed'));
+    } catch (error) {
+      showApiError(error, t);
+    }
+  }, [dispatch, t, token, channelId, handleClose]);
 
   const formik = useFormik({
     initialValues: { name: channel?.name ?? '' },
@@ -50,25 +70,7 @@ const RenameChannelModal = () => {
     validationSchema: getChannelSchema(channelNames, channel?.name),
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: async (values, { resetForm }) => {
-      try {
-        const response = await axios.patch(
-          routes.channel(channelId),
-          { name: filterProfanity(values.name.trim()) },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        dispatch(renameChannel({
-          id: response.data.id,
-          changes: { name: response.data.name },
-        }));
-        handleClose(resetForm);
-        toast.success(t('channels.renamed'));
-      } catch (error) {
-        showApiError(error, t);
-      }
-    },
+    onSubmit: handleSubmit,
   });
 
   useEffect(() => {

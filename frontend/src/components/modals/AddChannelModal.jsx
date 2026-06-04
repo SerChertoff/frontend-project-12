@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -36,33 +36,35 @@ const AddChannelModal = () => {
     }
   }, [show]);
 
-  const handleClose = (resetForm) => {
+  const handleClose = useCallback((resetForm) => {
     dispatch(closeAddChannelModal());
     resetForm();
-  };
+  }, [dispatch]);
+
+  const handleSubmit = useCallback(async (values, { resetForm }) => {
+    try {
+      const response = await axios.post(
+        routes.channels(),
+        { name: filterProfanity(values.name.trim()) },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      dispatch(addChannel(response.data));
+      dispatch(setCurrentChannelId(response.data.id));
+      handleClose(resetForm);
+      toast.success(t('channels.created'));
+    } catch (error) {
+      showApiError(error, t);
+    }
+  }, [dispatch, t, token, handleClose]);
 
   const formik = useFormik({
     initialValues: { name: '' },
     validationSchema: getChannelSchema(channelNames),
     validateOnBlur: false,
     validateOnChange: false,
-    onSubmit: async (values, { resetForm }) => {
-      try {
-        const response = await axios.post(
-          routes.channels(),
-          { name: filterProfanity(values.name.trim()) },
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-        dispatch(addChannel(response.data));
-        dispatch(setCurrentChannelId(response.data.id));
-        handleClose(resetForm);
-        toast.success(t('channels.created'));
-      } catch (error) {
-        showApiError(error, t);
-      }
-    },
+    onSubmit: handleSubmit,
   });
 
   return (
