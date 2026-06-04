@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Modal, Button } from 'react-bootstrap';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
   removeChannel,
@@ -10,13 +9,13 @@ import {
   setChannelToRemove,
   DEFAULT_CHANNEL_ID,
 } from '../../slices/channelsSlice';
-import { selectAuth } from '../../slices/authSlice';
 import {
   selectModalRemoveChannel,
   closeRemoveChannelModal,
   setCurrentChannelId,
 } from '../../slices/uiSlice';
 import showApiError from '../../utils/errorHandler';
+import api from '../../api';
 import routes from '../../routes';
 
 const RemoveChannelModal = () => {
@@ -25,7 +24,6 @@ const RemoveChannelModal = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const show = useSelector(selectModalRemoveChannel);
   const channelId = useSelector(selectChannelToRemove);
-  const { token } = useSelector(selectAuth);
 
   const handleClose = () => {
     dispatch(closeRemoveChannelModal());
@@ -35,9 +33,7 @@ const RemoveChannelModal = () => {
   const handleConfirm = async () => {
     setIsSubmitting(true);
     try {
-      const response = await axios.delete(routes.channel(channelId), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.delete(routes.channel(channelId));
       dispatch(removeChannel(response.data.id));
       dispatch(setCurrentChannelId(DEFAULT_CHANNEL_ID));
       handleClose();

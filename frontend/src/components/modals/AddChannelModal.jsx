@@ -2,13 +2,11 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
   Modal, Form, Button,
 } from 'react-bootstrap';
 import { addChannel, channelsSelectors } from '../../slices/channelsSlice';
-import { selectAuth } from '../../slices/authSlice';
 import {
   selectModalAddChannel,
   closeAddChannelModal,
@@ -17,6 +15,7 @@ import {
 import { setLocale, getChannelSchema } from '../../validation/validation';
 import showApiError from '../../utils/errorHandler';
 import filterProfanity from '../../filter';
+import api from '../../api';
 import routes from '../../routes';
 
 const closeAddModal = (dispatch, resetForm) => {
@@ -24,14 +23,11 @@ const closeAddModal = (dispatch, resetForm) => {
   resetForm();
 };
 
-const createAddChannelSubmit = ({ dispatch, t, token }) => async (values, { resetForm }) => {
+const createAddChannelSubmit = ({ dispatch, t }) => async (values, { resetForm }) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       routes.channels(),
       { name: filterProfanity(values.name.trim()) },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
     );
     dispatch(addChannel(response.data));
     dispatch(setCurrentChannelId(response.data.id));
@@ -47,7 +43,6 @@ const AddChannelModal = () => {
   const dispatch = useDispatch();
   const inputRef = useRef(null);
   const show = useSelector(selectModalAddChannel);
-  const { token } = useSelector(selectAuth);
   const channels = useSelector(channelsSelectors.selectAll);
   const channelNames = channels.map(({ name }) => name);
 
@@ -60,8 +55,8 @@ const AddChannelModal = () => {
   }, [show]);
 
   const handleSubmit = useMemo(
-    () => createAddChannelSubmit({ dispatch, t, token }),
-    [dispatch, t, token],
+    () => createAddChannelSubmit({ dispatch, t }),
+    [dispatch, t],
   );
 
   const formik = useFormik({

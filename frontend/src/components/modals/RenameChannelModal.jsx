@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import {
   Modal, Form, Button,
@@ -13,7 +12,6 @@ import {
   selectChannelToRename,
   setChannelToRename,
 } from '../../slices/channelsSlice';
-import { selectAuth } from '../../slices/authSlice';
 import {
   selectModalRenameChannel,
   closeRenameChannelModal,
@@ -21,6 +19,7 @@ import {
 import { setLocale, getChannelSchema } from '../../validation/validation';
 import showApiError from '../../utils/errorHandler';
 import filterProfanity from '../../filter';
+import api from '../../api';
 import routes from '../../routes';
 
 const closeRenameModal = (dispatch, resetForm) => {
@@ -30,15 +29,12 @@ const closeRenameModal = (dispatch, resetForm) => {
 };
 
 const createRenameChannelSubmit = ({
-  dispatch, t, token, channelId,
+  dispatch, t, channelId,
 }) => async (values, { resetForm }) => {
   try {
-    const response = await axios.patch(
+    const response = await api.patch(
       routes.channel(channelId),
       { name: filterProfanity(values.name.trim()) },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      },
     );
     dispatch(renameChannel({
       id: response.data.id,
@@ -57,7 +53,6 @@ const RenameChannelModal = () => {
   const inputRef = useRef(null);
   const show = useSelector(selectModalRenameChannel);
   const channelId = useSelector(selectChannelToRename);
-  const { token } = useSelector(selectAuth);
   const channels = useSelector(channelsSelectors.selectAll);
   const channel = useSelector((state) => (
     channelId ? channelsSelectors.selectById(state, channelId) : null
@@ -67,10 +62,8 @@ const RenameChannelModal = () => {
   setLocale(t);
 
   const handleSubmit = useMemo(
-    () => createRenameChannelSubmit({
-      dispatch, t, token, channelId,
-    }),
-    [dispatch, t, token, channelId],
+    () => createRenameChannelSubmit({ dispatch, t, channelId }),
+    [dispatch, t, channelId],
   );
 
   const formik = useFormik({

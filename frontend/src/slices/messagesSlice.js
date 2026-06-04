@@ -1,23 +1,18 @@
-import axios from 'axios';
 import {
   createSlice,
   createEntityAdapter,
   createAsyncThunk,
 } from '@reduxjs/toolkit';
 import { removeChannel } from './channelsSlice';
+import api from '../api';
 import routes from '../routes';
 
 const messagesAdapter = createEntityAdapter();
 
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
-  async (_, { getState }) => {
-    const { token } = getState().auth;
-    const response = await axios.get(routes.messages(), {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  async () => {
+    const response = await api.get(routes.messages());
     return response.data;
   },
 );

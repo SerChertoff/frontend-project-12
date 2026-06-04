@@ -6,8 +6,8 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Card, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { setCredentials } from '../slices/authSlice';
+import api from '../api';
 import routes from '../routes';
 
 const createLoginSubmit = ({
@@ -16,7 +16,7 @@ const createLoginSubmit = ({
   setAuthFailed(false);
 
   try {
-    const response = await axios.post(routes.login(), values);
+    const response = await api.post(routes.login(), values);
     dispatch(setCredentials(response.data));
     navigate(routes.rootPage());
   } catch (error) {

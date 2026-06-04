@@ -6,9 +6,9 @@ import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Card, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { setCredentials } from '../slices/authSlice';
 import { setLocale, getSignupSchema } from '../validation/validation';
+import api from '../api';
 import routes from '../routes';
 
 const createSignupSubmit = ({
@@ -17,7 +17,7 @@ const createSignupSubmit = ({
   setSignupFailed(false);
 
   try {
-    const response = await axios.post(routes.signup(), {
+    const response = await api.post(routes.signup(), {
       username: values.username,
       password: values.password,
     });

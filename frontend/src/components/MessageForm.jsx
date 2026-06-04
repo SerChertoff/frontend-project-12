@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useFormik } from 'formik';
-import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Form, Button, InputGroup } from 'react-bootstrap';
@@ -9,10 +8,11 @@ import { selectAuth } from '../slices/authSlice';
 import { selectCurrentChannelId, selectConnectionStatus } from '../slices/uiSlice';
 import showApiError from '../utils/errorHandler';
 import filterProfanity from '../filter';
+import api from '../api';
 import routes from '../routes';
 
 const createMessageSubmit = ({
-  dispatch, t, username, token, currentChannelId,
+  dispatch, t, username, currentChannelId,
 }) => async (values, { resetForm, setSubmitting }) => {
   try {
     const newMessage = {
@@ -25,11 +25,7 @@ const createMessageSubmit = ({
       return;
     }
 
-    const response = await axios.post(routes.messages(), newMessage, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.post(routes.messages(), newMessage);
 
     dispatch(addMessage(response.data));
     resetForm();
@@ -43,15 +39,15 @@ const createMessageSubmit = ({
 const MessageForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { username, token } = useSelector(selectAuth);
+  const { username } = useSelector(selectAuth);
   const currentChannelId = useSelector(selectCurrentChannelId);
   const connectionStatus = useSelector(selectConnectionStatus);
 
   const handleSubmit = useMemo(
     () => createMessageSubmit({
-      dispatch, t, username, token, currentChannelId,
+      dispatch, t, username, currentChannelId,
     }),
-    [dispatch, t, username, token, currentChannelId],
+    [dispatch, t, username, currentChannelId],
   );
 
   const formik = useFormik({
