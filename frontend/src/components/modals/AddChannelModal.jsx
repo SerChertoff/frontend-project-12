@@ -83,6 +83,7 @@ const AddChannelModal = () => {
             <Form.Control
               ref={inputRef}
               name="name"
+              autoComplete="off"
               value={formik.values.name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}

@@ -72,7 +72,7 @@ const LoginPage = () => {
                 ref={inputRef}
                 name="username"
                 type="text"
-                autoComplete="username"
+                autoComplete="off"
                 required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -85,7 +85,7 @@ const LoginPage = () => {
               <Form.Control
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="off"
                 required
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}

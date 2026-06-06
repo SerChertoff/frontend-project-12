@@ -64,6 +64,7 @@ const MessageForm = () => {
       <InputGroup>
         <Form.Control
           name="body"
+          autoComplete="off"
           placeholder={
             connectionStatus === 'connected'
               ? t('chat.inputMessage')

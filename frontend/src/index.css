@@ -124,6 +124,14 @@ body {
   margin: 0;
 }
 
+.channels-panel__add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+}
+
 .channels-panel__list {
   gap: 4px;
   overflow-y: auto;

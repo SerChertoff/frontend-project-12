@@ -85,7 +85,7 @@ const SignupPage = () => {
                 ref={inputRef}
                 name="username"
                 type="text"
-                autoComplete="username"
+                autoComplete="off"
                 onChange={(event) => {
                   setSignupFailed(false);
                   formik.handleChange(event);
@@ -103,7 +103,7 @@ const SignupPage = () => {
               <Form.Control
                 name="password"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="off"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.password}
@@ -118,7 +118,7 @@ const SignupPage = () => {
               <Form.Control
                 name="confirmPassword"
                 type="password"
-                autoComplete="new-password"
+                autoComplete="off"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.confirmPassword}
